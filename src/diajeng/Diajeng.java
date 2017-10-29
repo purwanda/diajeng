@@ -55,8 +55,9 @@ public class Diajeng {
                 out.println("\n4> Keluar dari menu admin");
                 out.println("\n0> Matikan aplikasi\n");
                 out.flush();
-                Scanner in = new Scanner(clientadmin.getInputStream());
-                int choice = Integer.parseInt(in.nextLine());
+                int choice = getInput(out);
+//                Scanner in = new Scanner(clientadmin.getInputStream());
+//                int choice = Integer.parseInt(in.nextLine());
                 performAction(choice,out);
             }
             catch(IOException ioEx)
@@ -64,7 +65,34 @@ public class Diajeng {
                 logging.write("Gagal buat thread handler client");
             }
         }
-    }    
+    }
+    
+    private static int getInput(PrintWriter out)
+    {
+        Scanner in;
+        int choice = -1;
+            while (choice < 0 || choice > 4)
+            {
+                try
+                {
+                    out.println("\n masukkan pilihanmu (0-4) :");
+                    out.flush();
+                    in = new Scanner(clientadmin.getInputStream());
+                    choice = Integer.parseInt(in.nextLine());
+                }
+                catch(NumberFormatException e)
+                {
+                    out.println("Pilihan salah. Silakan pilih kembali");
+                    out.flush();
+                }
+                catch (IOException ex) {
+                    out.println("Maaf input gagal");
+                    out.flush();
+                }
+            }
+
+        return choice;
+    }
 
     private static void performAction(int choice,PrintWriter out)
     {
