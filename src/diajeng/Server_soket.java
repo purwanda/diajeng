@@ -1,5 +1,6 @@
 package diajeng;
 
+import org.apache.commons.codec.binary.Base64;
 import static diajeng.Server_soket.dbip;
 import static diajeng.Server_soket.pan;
 import static diajeng.Server_soket.tanggal;
@@ -12,8 +13,13 @@ import java.sql.*;
 import org.json.simple.JSONObject;
 import org.json.simple.*; 
 import java.sql.ResultSet; 
+//import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -78,7 +84,44 @@ class ClientHandler extends Thread
             //ioEx.printStackTrace();
         }
     }
+    
+    public static String decrypt(String key, String initVector, String encrypted) 
+    {
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
+
+            byte[] original = cipher.doFinal(DatatypeConverter.parseBase64Binary(encrypted‌​));
+
+            return new String(original);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
  
+        public static String encrypt(String key, String initVector, String value) {
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+
+            byte[] encrypted = cipher.doFinal(value.getBytes());
+            return Base64.encodeBase64String(encrypted);
+                    
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+        
     public void run() 
     {
         String received="";
@@ -88,7 +131,10 @@ class ClientHandler extends Thread
         {
             try
             {
-                received = dis.readUTF();               
+                String res = dis.readUTF();
+                System.out.println("req yang diterima : "+res);
+                received = decrypt("Bar12345Bar12345","RandomInitVector",res);
+                System.out.println("hasil dekrip req yang diterima : "+received);
                 try 
                 {
                     Object obj = new JSONParser().parse(received);
@@ -233,7 +279,12 @@ class ClientHandler extends Thread
             catch(IOException ioEx)
             {
                 received = "QUIT";
+            } catch (Exception ex) {
+                System.out.println("ga bisa didekrip");
+                logging.write("ga bisa didekrip");
+                received = "QUIT";
             }
+            
             if (received != "QUIT"){
                 logging.write(received);
             }
@@ -241,7 +292,9 @@ class ClientHandler extends Thread
             //Mengirim respon ke client
             try
             {
-                dos.writeUTF(responserver);
+                System.out.println("Respon asli : "+responserver);
+                dos.writeUTF(encrypt("Bar12345Bar12345","RandomInitVector",responserver));
+                System.out.println("Respon yang udah dienkrip : "+encrypt("Bar12345Bar12345","RandomInitVector",responserver));
             }
             catch(IOException ioEx)
             {
