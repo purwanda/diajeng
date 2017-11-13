@@ -1,5 +1,6 @@
 package diajeng;
 
+import static diajeng.Server_soket.bulan;
 import org.apache.commons.codec.binary.Base64;
 import static diajeng.Server_soket.dbip;
 import static diajeng.Server_soket.pan;
@@ -29,7 +30,7 @@ public class Server_soket extends Thread {
     public static ServerSocket serverSocket;    
     private static final int PORT = 2000;  
     public static int buka_port=0;
-    public static String tanggal,pan,nomor,dbip,dbsid,dbuser,dbpassword;
+    public static String tanggal,bulan,pan,nomor,dbip,dbsid,dbuser,dbpassword;
     public static int dbport;
     
     public void run() {
@@ -40,7 +41,6 @@ public class Server_soket extends Thread {
             buka_port=1;
         } catch (IOException ioEx) {
             logging.write("Tdak dapat mensetup port");
-//            System.out.println("\nTidak dapat mensetup port!");
             System.exit(1);
         }
         do 
@@ -125,145 +125,152 @@ class ClientHandler extends Thread
     public void run() 
     {
         String received="";
-        String responserver="";
+        String responserver="";        
  
         do 
         {
             try
             {
                 String res = dis.readUTF();
-                System.out.println("req yang diterima : "+res);
                 received = decrypt("Bar12345Bar12345","RandomInitVector",res);
-                System.out.println("hasil dekrip req yang diterima : "+received);
+                logging.write("input "+received);
                 try 
                 {
                     Object obj = new JSONParser().parse(received);
                     JSONObject jo = (JSONObject) obj;
                     String produk = (String) jo.get("produk");
-                    System.out.println("produk = "+produk);
+                    String user = (String) jo.get("user");
+                    String password = (String) jo.get("password");
+                    tanggal = (String) jo.get("tanggal");
+                    bulan=tanggal.substring(0, 2);
+                    int boleh=0;
+                    boleh = autentifikasi(user,password);
+                    if (boleh!=1) {
+                        responserver = "error_1";
+                    } else
                     switch (produk) {
                         case "atmb":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             pan = (String) jo.get("pan");
                             responserver = prosesDataatmb(tanggal,pan);
                             break;
                         case "IsatPre":
-                            String tgl = (String) jo.get("tanggal");
+//                            String tgl = (String) jo.get("tanggal");
                             String nomor = (String) jo.get("nomor");
-                            responserver = prosesDataisatpre(tgl,nomor);
+                            responserver = prosesDataisatpre(tanggal,nomor);
                             break;
                         case "IsatPost":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDataisatpost(tanggal,nomor);
                             break;
                         case "XLPre":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDataxlpre(tanggal,nomor);
                             break;
                         case "XLPost":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"122");
                             break;
                         case "SmartfrenPre":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDatasmartfrenpre(tanggal,nomor);
                             break;                                        
                         case "SmartfrenPost":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDatasmartfrenpost(tanggal,nomor);
                             break;                                                
                         case "AxisPre":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"110","1141");
                             break;
                         case "MNC":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"800");
                             break;
                         case "TselPre":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDatatselpre(tanggal,nomor);
                             break;                            
                         case "TselPost":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"132");
                             break;
                         case "EsiaPre":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"181");
                             break;
                         case "EsiaPost":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"182");
                             break;
                         case "PLN":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"212","2101");
                             break;                            
                         case "PGN":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"212","2102");
                             break;
                         case "PBB":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"231");
                             break;
                         case "Citi":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDataciti(tanggal,nomor);
                             break;
                         case "Adira":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDataadira(tanggal,nomor);
                             break;
                         case "FIF":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDatafif(tanggal,nomor);
                             break;            
                         case "summit":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"414","4101");
                             break;                            
                         case "baf":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"414","4102");
                             break;
                         case "ui":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"612");
                             break;
                         case "takaful":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDatatakaful(tanggal,nomor);
                             break;
                         case "pru":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesDatapru(tanggal,nomor);
                             break;
                         case "garuda":
-                            tanggal = (String) jo.get("tanggal");
+//                            tanggal = (String) jo.get("tanggal");
                             nomor = (String) jo.get("nomor");
                             responserver = prosesdatapayment(tanggal,nomor,"788");
                             break;
@@ -280,7 +287,6 @@ class ClientHandler extends Thread
             {
                 received = "QUIT";
             } catch (Exception ex) {
-                System.out.println("ga bisa didekrip");
                 logging.write("ga bisa didekrip");
                 received = "QUIT";
             }
@@ -292,9 +298,8 @@ class ClientHandler extends Thread
             //Mengirim respon ke client
             try
             {
-                System.out.println("Respon asli : "+responserver);
+                logging.write("output "+responserver);
                 dos.writeUTF(encrypt("Bar12345Bar12345","RandomInitVector",responserver));
-                System.out.println("Respon yang udah dienkrip : "+encrypt("Bar12345Bar12345","RandomInitVector",responserver));
             }
             catch(IOException ioEx)
             {
@@ -314,6 +319,29 @@ class ClientHandler extends Thread
             logging.write("Penutupan koneksi gagal!");
         }
     }
+
+    private int autentifikasi(String user,String password)
+    {
+        Connection con;
+        int boleh=0;
+        try
+        {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+            con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
+            Statement stmt=con.createStatement();
+            ResultSet rs=stmt.executeQuery("select count(1) jumlah from t_user where nama = '"+user+"' and password ='"+password+"'");
+            while (rs.next()) {
+                boleh = rs.getInt("jumlah");                
+            }
+            con.close();
+        }
+        catch(Exception e)
+        {
+            logging.write(e);
+            return 0;
+        }
+        return boleh;
+    }
     
     private String prosesDataatmb(String tgl,String pan)
     {
@@ -321,11 +349,12 @@ class ClientHandler extends Thread
         String responserver="";
         try
         {
+//            String bulan=tgl.substring(0, 2);
             Class.forName("oracle.jdbc.driver.OracleDriver");
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
-            logging.write("Koneksi ke DB berhasil");
+            logging.write("Koneksi ke DB berhasil");            
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_100,de_125,de_127 from atmbiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_002='"+pan+"' order by timestamp,msg_dir");
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_100,de_125,de_127 from atmbiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_002='"+pan+"' order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
             con.close();
@@ -338,22 +367,35 @@ class ClientHandler extends Thread
         return responserver;
     }
     
+    private String formatlama(String nomor){
+        StringBuilder str = new StringBuilder(nomor);
+        String nomorbaru=nomor;
+        int panjang=nomorbaru.length();
+        while(panjang<13){
+            nomorbaru=nomorbaru.substring(0,4)+"0"+nomorbaru.substring(4, nomorbaru.length());
+            panjang=nomorbaru.length();
+        }                
+        return nomorbaru;
+    }
+    
     private String prosesDataisatpre(String tgl,String nomor)
     {
         Connection con;
         String responserver="";
         try
         {
+            String nomorbaru=formatlama(nomor);
+//            String bulan=tgl.substring(0, 2);
             Class.forName("oracle.jdbc.driver.OracleDriver");
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);            
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='141' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='151' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='161' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1157%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1159%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1161%' and de_048 like '%"+nomor+"%' "        
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='141' and de_048 like '%"+nomorbaru+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='151' and de_048 like '%"+nomorbaru+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='161' and de_048 like '%"+nomorbaru+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1157"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1159"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1161"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -373,14 +415,15 @@ class ClientHandler extends Thread
         String responserver="";
         try
         {
+//            String bulan=tgl.substring(0, 2);
             Class.forName("oracle.jdbc.driver.OracleDriver");
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);            
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='712' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='722' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='732' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='742' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='712' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='722' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='732' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='742' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -404,8 +447,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);            
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='751' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='752' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='751' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='752' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -429,9 +472,9 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='412' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4112%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4113%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='412' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4112%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4113%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -455,8 +498,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '0007' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4122%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '0007' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4122%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -480,8 +523,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='311' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='312' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='311' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='312' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -505,9 +548,9 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1101%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1191%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1193%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1101%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1191%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1193%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -531,9 +574,9 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1002%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1192%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1194%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1002%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1192%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1194%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -557,10 +600,10 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='142' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='152' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='162' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1158%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='142' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='152' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='162' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1158%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -584,8 +627,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='131' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='133' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='131' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='133' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -609,8 +652,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='121' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1123%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='121' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1123%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -634,7 +677,7 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='"+de_63+"' and de_048 like '%"+nomor+"%' order by timestamp,msg_dir");
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='"+de_63+"' and de_048 like '%"+nomor+"%' order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
             con.close();
@@ -657,7 +700,7 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser where substr(file_name,1,6)='IA"+tgl+"' and de_063='"+de_63+"' and de_048 like '"+de_48+"%' and de_048 like '%"+nomor+"%' order by timestamp,msg_dir");
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='"+de_63+"' and de_048 like '"+de_48+"%' and de_048 like '%"+nomor+"%' order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
             con.close();
