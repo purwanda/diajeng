@@ -354,7 +354,7 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");            
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_100,de_125,de_127 from atmbiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_002='"+pan+"' order by timestamp,msg_dir");
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_100,de_125,de_127 from atmbiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_002='"+pan+"' order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
             con.close();
@@ -390,12 +390,12 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);            
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='141' and de_048 like '%"+nomorbaru+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='151' and de_048 like '%"+nomorbaru+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='161' and de_048 like '%"+nomorbaru+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1157"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1159"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1161"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='141' and de_048 like '%"+nomorbaru+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='151' and de_048 like '%"+nomorbaru+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='161' and de_048 like '%"+nomorbaru+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1157"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1159"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1161"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -420,10 +420,10 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);            
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='712' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='722' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='732' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='742' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='712' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='722' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='732' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='742' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -447,8 +447,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);            
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='751' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='752' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='751' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='752' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -472,9 +472,9 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='412' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4112%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4113%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='412' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4112%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4113%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -498,8 +498,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '0007' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4122%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '0007' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='414' and de_048 like '4122%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -523,8 +523,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='311' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='312' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='311' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='312' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -548,9 +548,9 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1101%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1191%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1193%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1101%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1191%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1193%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -574,9 +574,9 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1002%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1192%' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1194%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1002%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1192%' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1194%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -600,10 +600,10 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='142' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='152' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='162' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1158%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='142' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='152' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='162' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='100' and de_048 like '1158%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -627,8 +627,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='131' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='133' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='131' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='133' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -652,8 +652,8 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='121' and de_048 like '%"+nomor+"%' "
-                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1123%' and de_048 like '%"+nomor+"%' "
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='121' and de_048 like '%"+nomor+"%' "
+                    + "union all select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='110' and de_048 like '1123%' and de_048 like '%"+nomor+"%' "
                     + "order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
@@ -677,7 +677,7 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='"+de_63+"' and de_048 like '%"+nomor+"%' order by timestamp,msg_dir");
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='"+de_63+"' and de_048 like '%"+nomor+"%' order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
             con.close();
@@ -700,7 +700,7 @@ class ClientHandler extends Thread
             con=DriverManager.getConnection("jdbc:oracle:thin:@"+Server_soket.dbip+":"+Server_soket.dbport+":"+Server_soket.dbsid,Server_soket.dbuser,Server_soket.dbpassword);
             logging.write("Koneksi ke DB berhasil");
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='"+de_63+"' and de_048 like '"+de_48+"%' and de_048 like '%"+nomor+"%' order by timestamp,msg_dir");
+            ResultSet rs=stmt.executeQuery("select substr(file_name,3,4) mmdd,timestamp,mti,msg_dir,substr(proc,12,length(proc)-11) proc,de_002,de_003,de_004,de_011,de_032,de_037,de_039,de_041,de_063,de_048 from soppiaf_parser partition (P"+bulan+") where substr(file_name,1,6)='IA"+tgl+"' and de_063='"+de_63+"' and de_048 like '"+de_48+"%' and de_048 like '%"+nomor+"%' order by timestamp,msg_dir");
             JSONObject json = Convertor.convertToJSON(rs);
             responserver=json.toString();
             con.close();
